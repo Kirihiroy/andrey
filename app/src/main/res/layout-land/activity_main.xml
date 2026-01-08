@@ -122,17 +122,17 @@
         <!-- Кнопка переключения темы -->
         <Button
             android:id="@+id/btnTheme"
-            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="140dp"
             android:layout_height="55dp"
             android:layout_marginStart="10dp"
-            android:icon="@drawable/ic_theme"
             android:text="Тема"
             android:textSize="16sp"
-            app:backgroundTint="#2C5364"
-            app:cornerRadius="12dp"
+            android:icon="@drawable/ic_theme"
             app:iconGravity="textStart"
-            app:iconPadding="8dp" />
+            app:iconPadding="8dp"
+            app:cornerRadius="12dp"
+            app:backgroundTint="#2C5364"
+            style="@style/Widget.MaterialComponents.Button" />
     </LinearLayout>
 
 </RelativeLayout>

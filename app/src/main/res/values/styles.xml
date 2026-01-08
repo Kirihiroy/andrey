@@ -1,7 +1,12 @@
 <resources>
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Убрали .DarkActionBar и заменили на .NoActionBar -->
+        <item name="colorPrimary">#2C5364</item>
+        <item name="colorPrimaryDark">#0F2027</item>
+        <item name="colorAccent">#2C5364</item>
 
-    <style name="Widget.Theme.Andrey.ButtonBar.Fullscreen" parent="">
-        <item name="android:background">@color/black_overlay</item>
-        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
+        <!-- Дополнительно можно настроить статус-бар -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 </resources>

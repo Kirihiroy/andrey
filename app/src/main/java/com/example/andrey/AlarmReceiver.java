@@ -76,7 +76,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     private void showNotification(Context context) {
         try {
             // Создаем Intent для открытия приложения при нажатии на уведомление
-            Intent intent = new Intent(context, MainActivity.class);
+            Intent intent = new Intent(context,com.example.andrey.MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
             PendingIntent pendingIntent;
