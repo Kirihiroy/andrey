@@ -1,12 +1,18 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Основная тема БЕЗ ActionBar -->
     <style name="Base.Theme.Andrey" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <!-- Ваши цвета -->
+        <item name="colorPrimary">#2C5364</item>
+        <item name="colorSecondary">#203A43</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Полноэкранный режим -->
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="ThemeOverlay.Andrey.FullscreenContainer" parent="">
-        <item name="fullscreenBackgroundColor">@color/light_blue_900</item>
-        <item name="fullscreenTextColor">@color/light_blue_A400</item>
-    </style>
+    <!-- Тема приложения -->
+    <style name="Theme.Andrey" parent="Base.Theme.Andrey" />
 </resources>

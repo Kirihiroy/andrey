@@ -18,28 +18,12 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true" >
-
-
-        <!-- Ресивер для будильника -->
-        <receiver
-            android:name=".AlarmReceiver"
-            android:enabled="true"
-            android:exported="false"
-            android:permission="android.permission.SCHEDULE_EXACT_ALARM">
-
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-            </intent-filter>
-        </receiver>
+        android:theme="@style/Theme.Andrey"> <!-- Исправлено! -->
 
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+            android:theme="@style/Theme.Andrey"> <!-- Добавлено! -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
