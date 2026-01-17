@@ -8,11 +8,21 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 
 import com.example.andrey.R;
+import com.google.android.material.button.MaterialButton;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,20 +38,35 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences prefs;
     private static final String PREFS_NAME = "ClockPrefs";
     private static final String KEY_THEME = "isDarkTheme";
+    private Spinner spinnerTimeZone;
+    private String selectedTimeZone = "GMT+3"; // По умолчанию Москва
+    private SimpleDateFormat timeFormat, secondsFormat, dateFormat, dayFormat;
+
+    private boolean isAlarmFragmentVisible = false;
+    private FrameLayout fragmentContainer;
+    private LinearLayout mainContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
         prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         isDarkTheme = prefs.getBoolean(KEY_THEME, true);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        fragmentContainer = findViewById(R.id.fragmentContainer);
+        mainContent = findViewById(R.id.mainContent);
+
+        // Изначально скрываем контейнер фрагментов
+        fragmentContainer.setVisibility(View.GONE);
 
         // Скрываем ActionBar
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+
         View rootView = findViewById(R.id.mainLayout);
 
         // Инициализация элементов
@@ -53,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         // Обработчики кнопок
         setupButtonListeners();
     }
+
 
     private void initViews() {
         tvTime = findViewById(R.id.tvTime);
@@ -71,12 +97,180 @@ public class MainActivity extends AppCompatActivity {
             btnFormat.setText(is24HourFormat ? "24H" : "12H");
             animateButton(v);
             updateTime();
+
         });
 
         btnTheme.setOnClickListener(v -> {
             isDarkTheme = !isDarkTheme;
             applyTheme();
             animateButton(v);
+        });
+        Button btnAlarm = findViewById(R.id.btnAlarm);
+        btnAlarm.setOnClickListener(v -> {
+            if (isAlarmFragmentVisible) {
+                setupTimeZoneSpinner();
+                hideAlarmFragment();
+            } else {
+                showAlarmFragment();
+            }
+        });
+    }
+    private void setupTimeZoneSpinner() {
+        // Массив часовых поясов
+        String[] timeZones = {
+                "Москва (GMT+3)",
+                "Лондон (GMT+0)",
+                "Нью-Йорк (GMT-5)",
+                "Токио (GMT+9)",
+                "Сидней (GMT+11)",
+                "Пекин (GMT+8)"
+        };
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                timeZones
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTimeZone.setAdapter(adapter);
+
+        // Обработчик выбора
+        spinnerTimeZone.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selected = (String) parent.getItemAtPosition(position);
+                updateTimeZone(selected);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+    // Метод обновления часового пояса
+    private void updateTimeZone(String timeZoneStr) {
+        // Парсим выбранный часовой пояс
+        if (timeZoneStr.contains("Москва")) selectedTimeZone = "GMT+3";
+        else if (timeZoneStr.contains("Лондон")) selectedTimeZone = "GMT+0";
+        else if (timeZoneStr.contains("Нью-Йорк")) selectedTimeZone = "GMT-5";
+        else if (timeZoneStr.contains("Токио")) selectedTimeZone = "GMT+9";
+        else if (timeZoneStr.contains("Сидней")) selectedTimeZone = "GMT+11";
+        else if (timeZoneStr.contains("Пекин")) selectedTimeZone = "GMT+8";
+
+        // Принудительно обновляем время
+        updateClock();
+    }
+    // Обновленный метод updateClock() с поддержкой часовых поясов:
+    private void updateClock() {
+        Date now = new Date();
+
+        // Создаем форматеры с учетом часового пояса
+        TimeZone timeZone = TimeZone.getTimeZone(selectedTimeZone);
+
+        timeFormat = new SimpleDateFormat(is24HourFormat ? "HH:mm" : "hh:mm", Locale.getDefault());
+        timeFormat.setTimeZone(timeZone);
+
+        secondsFormat = new SimpleDateFormat(":ss", Locale.getDefault());
+        secondsFormat.setTimeZone(timeZone);
+
+        dateFormat = new SimpleDateFormat("d MMMM, EEEE", new Locale("ru"));
+        dateFormat.setTimeZone(timeZone);
+
+        dayFormat = new SimpleDateFormat("d", Locale.getDefault());
+        dayFormat.setTimeZone(timeZone);
+
+        // Время Unix (всегда по UTC)
+        long epochSeconds = now.getTime() / 1000;
+
+        // AM/PM
+        if (!is24HourFormat) {
+            SimpleDateFormat amPmFormat = new SimpleDateFormat("a", Locale.getDefault());
+            amPmFormat.setTimeZone(timeZone);
+            tvAmPm.setText(amPmFormat.format(now));
+            tvAmPm.setVisibility(View.VISIBLE);
+        } else {
+            tvAmPm.setVisibility(View.GONE);
+        }
+
+        // Установка значений
+        tvTime.setText(timeFormat.format(now));
+        tvSeconds.setText(secondsFormat.format(now));
+        tvDate.setText(dateFormat.format(now));
+        tvDay.setText(dayFormat.format(now));
+        tvEpoch.setText(String.valueOf(epochSeconds));
+    }
+    private void showAlarmFragment() {
+        isAlarmFragmentVisible = true;
+
+        // Скрываем основной контент часов
+        mainContent.setVisibility(View.GONE);
+        fragmentContainer.setVisibility(View.VISIBLE);
+
+        // Добавляем фрагмент
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        AlaramFragment alarmFragment = new AlaramFragment();
+        transaction.replace(R.id.fragmentContainer, alarmFragment, "AlarmFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+
+        // Меняем текст кнопки (способ для любой кнопки)
+        MaterialButton btnAlarm = findViewById(R.id.btnAlarm);
+        btnAlarm.setText("<Часы");
+
+
+
+    }
+    private void hideAlarmFragment() {
+        isAlarmFragmentVisible = false;
+
+        // Показываем основной контент
+        mainContent.setVisibility(View.VISIBLE);
+        fragmentContainer.setVisibility(View.GONE);
+
+        // Убираем фрагмент из back stack
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.getBackStackEntryCount() > 0) {
+            fragmentManager.popBackStack();
+        }
+
+        // Восстанавливаем кнопку
+        MaterialButton btnAlarm = findViewById(R.id.btnAlarm);
+        btnAlarm.setText("Будильник");
+
+
+    }
+    @Override
+    public void onBackPressed() {
+        if (isAlarmFragmentVisible) {
+            hideAlarmFragment();
+        } else {
+            super.onBackPressed();
+        }
+    }
+    // Добавьте кнопку для показа/скрытия Spinner
+    private void setupTimeZoneButton() {
+        // В activity_main.xml добавьте кнопку рядом с другими кнопками:
+    /*
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnTimeZone"
+        android:layout_width="wrap_content"
+        android:layout_height="55dp"
+        android:text="🌍"
+        android:textSize="18sp"
+        app:backgroundTint="#2C5364"/>
+    */
+
+        MaterialButton btnTimeZone = findViewById(R.id.btnTimeZone);
+        btnTimeZone.setOnClickListener(v -> {
+            if (spinnerTimeZone.getVisibility() == View.VISIBLE) {
+                spinnerTimeZone.setVisibility(View.GONE);
+                btnTimeZone.setText("🌍");
+            } else {
+                spinnerTimeZone.setVisibility(View.VISIBLE);
+                btnTimeZone.setText("✕");
+            }
         });
     }
 

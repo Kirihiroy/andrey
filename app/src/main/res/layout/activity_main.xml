@@ -8,131 +8,191 @@
     android:padding="20dp"
     tools:context=".MainActivity"
     android:id="@+id/mainLayout">
-
-    <!-- Верхняя панель с датой и временем в эпохе -->
-    <LinearLayout
+    <!-- Контейнер для фрагмента будильника -->
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="20dp"
-        android:gravity="center_vertical">
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@drawable/background_gradient"/>
 
-        <TextView
-            android:id="@+id/tvDate"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="25 декабря, среда"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:fontFamily="sans-serif" />
-
-        <TextView
-            android:id="@+id/tvEpoch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="1703491200"
-            android:textColor="#80FFFFFF"
-            android:textSize="14sp"
-            android:fontFamily="monospace" />
-    </LinearLayout>
-
-    <!-- Основной блок времени -->
     <LinearLayout
+        android:id="@+id/mainContent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_centerInParent="true"
-        android:gravity="center">
-
-        <!-- Часы и минуты -->
-        <TextView
-            android:id="@+id/tvTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="14:30"
-            android:textColor="#FFFFFF"
-            android:textSize="100sp"
-            android:fontFamily="sans-serif-light"
-            android:letterSpacing="0.1" />
-
-        <!-- Секунды и AM/PM -->
+        android:padding="20dp">
+        <!-- Верхняя панель с датой и временем в эпохе -->
         <LinearLayout
-            android:layout_width="wrap_content"
+
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center">
+            android:layout_marginTop="20dp"
+            android:gravity="center_vertical">
 
             <TextView
-                android:id="@+id/tvSeconds"
-                android:layout_width="wrap_content"
+                android:id="@+id/tvDate"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text=":45"
-                android:textColor="#B3FFFFFF"
-                android:textSize="36sp"
-                android:fontFamily="sans-serif-light" />
+                android:layout_weight="1"
+                android:text="25 декабря, среда"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif" />
 
             <TextView
-                android:id="@+id/tvAmPm"
+                android:id="@+id/tvEpoch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="PM"
-                android:textColor="#B3FFFFFF"
-                android:textSize="24sp"
-                android:layout_marginStart="10dp"
-                android:visibility="gone" />
+                android:text="1703491200"
+                android:textColor="#80FFFFFF"
+                android:textSize="14sp"
+                android:fontFamily="monospace" />
         </LinearLayout>
-
-        <!-- День месяца -->
-        <TextView
-            android:id="@+id/tvDay"
+        <!-- Выбор часового пояса -->
+        <Spinner
+            android:id="@+id/spinnerTimeZone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="25"
-            android:textColor="#FFFFFF"
-            android:textSize="60sp"
-            android:textStyle="bold"
-            android:layout_marginTop="10dp"
-            android:fontFamily="sans-serif-condensed" />
-    </LinearLayout>
-
-    <!-- Нижняя панель с кнопками -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="30dp"
-        android:gravity="center">
-
-        <!-- Кнопка переключения формата времени -->
-        <Button
-            android:id="@+id/btnFormat"
-            android:layout_width="140dp"
-            android:layout_height="55dp"
-            android:layout_marginEnd="10dp"
-            android:text="24H"
-            android:textSize="16sp"
-            android:drawableStart="@drawable/ic_24h"
-            android:drawablePadding="8dp"
+            android:layout_below="@id/tvDate"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
             android:backgroundTint="#2C5364"
-            android:foreground="?android:attr/selectableItemBackground"/>
+            android:popupBackground="#2C5364"
+            android:visibility="gone"/> <!-- Сначала скрываем -->
+        <!-- Основной блок времени -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerInParent="true"
+            android:gravity="center">
 
-        <!-- Кнопка переключения темы -->
-        <Button
-            android:id="@+id/btnTheme"
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="140dp"
-            android:layout_height="55dp"
-            android:layout_marginStart="10dp"
-            android:icon="@drawable/ic_theme"
-            android:text="Тема"
-            android:textSize="16sp"
-            app:backgroundTint="#2C5364"
-            app:cornerRadius="12dp"
-            app:iconGravity="textStart"
-            app:iconPadding="8dp" />
+            <!-- Часы и минуты -->
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="14:30"
+                android:textColor="#FFFFFF"
+                android:textSize="100sp"
+                android:fontFamily="sans-serif-light"
+                android:letterSpacing="0.1" />
+
+            <!-- Секунды и AM/PM -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/tvSeconds"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=":45"
+                    android:textColor="#B3FFFFFF"
+                    android:textSize="36sp"
+                    android:fontFamily="sans-serif-light" />
+
+                <TextView
+                    android:id="@+id/tvAmPm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PM"
+                    android:textColor="#B3FFFFFF"
+                    android:textSize="24sp"
+                    android:layout_marginStart="10dp"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <!-- День месяца -->
+            <TextView
+                android:id="@+id/tvDay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="25"
+                android:textColor="#FFFFFF"
+                android:textSize="60sp"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"
+                android:fontFamily="sans-serif-condensed" />
+        </LinearLayout>
+        <!-- Нижняя панель с кнопками -->
+
+        <LinearLayout
+            android:id="@+id/buttonContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="30dp"
+            android:gravity="center"
+            android:paddingHorizontal="16dp">
+
+            <!-- Кнопка часовых поясов -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTimeZone"
+                android:layout_width="wrap_content"
+                android:layout_height="55dp"
+                android:text="🌍"
+                android:textSize="18sp"
+                android:layout_marginEnd="8dp"
+                app:backgroundTint="#2C5364"/>
+
+            <!-- Кнопка формата времени -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFormat"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_weight="1"
+                android:text="24H"
+                android:textSize="16sp"
+                android:layout_marginEnd="8dp"
+                app:icon="@drawable/ic_24h"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:cornerRadius="12dp"
+                app:backgroundTint="#2C5364"/>
+
+            <!-- Кнопка темы -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTheme"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_weight="1"
+                android:text="Тема"
+                android:textSize="16sp"
+                android:layout_marginHorizontal="8dp"
+                app:icon="@drawable/ic_theme"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:cornerRadius="12dp"
+                app:backgroundTint="#2C5364"/>
+
+            <!-- Кнопка будильника -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAlarm"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_weight="1"
+                android:text="Будильник"
+                android:textSize="16sp"
+                android:layout_marginStart="8dp"
+                app:icon="@drawable/ic_alarm"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:cornerRadius="12dp"
+                app:backgroundTint="#FF5722"/>
+
+        </LinearLayout>
+
     </LinearLayout>
+
+
+
+
 
 </RelativeLayout>

@@ -32,12 +32,18 @@ public class AlaramFragment extends Fragment {
     private static final int ALARM_REQUEST_CODE = 1001;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_alaram, container, false);
+        Button btnBack = view.findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v ->
+        {
+            if (getActivity() != null) {
+                getActivity().onBackPressed();
+            }
+        });
 
-        btnAddAlarm = view.findViewById(R.id.btnAddAlarm);
-        alarmListView = view.findViewById(R.id.alarmListView);
+//       btnAddAlarm = view.findViewById(R.id.btnAddAlarm);
+//       alarmListView = view.findViewById(R.id.alarmListView);
 
         adapter = new ArrayAdapter<>(requireContext(),
                 android.R.layout.simple_list_item_1, alarms);
